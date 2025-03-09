@@ -9,7 +9,7 @@ def get_unique_urls_from_hosts(target_directory: str, edu_file: str, org_file: s
     # 存储所有的host
     edu_hosts = set()  # 存储包含 .edu 的host
     org_hosts = set()  # 存储包含 .org 的host
-    cn_hosts = set()  # 存储包含 .org 的host
+    cn_hosts = set()  # 存储包含 .cn 的host
 
     # 统计找到的txt文件数量
     file_count = 0
@@ -25,17 +25,24 @@ def get_unique_urls_from_hosts(target_directory: str, edu_file: str, org_file: s
                 # 按行读取文件
                 for line in f:
                     # 获取host, 假设每一行都是一个host
-                    host = line.strip()     
-                        # 分类保存
+                    host = line.strip()
+                    
+                    # 移除 www 前缀
+                    if host.startswith('www.'):
+                        host = host[4:]  # Remove 'www.' from the beginning
+                    
+                    # 分类保存
                     if '.edu' in host:
                         edu_hosts.add(host)
                     elif '.org' in host:
                         org_hosts.add(host)
                     elif '.cn' in host:
                         cn_hosts.add(host)        
+                
         # 打印处理进度
         progress = (file_count / len(files)) * 100  # 计算进度百分比
         print(f"处理进度: {file_count}/{len(files)} 文件 ({progress:.2f}%)", end='\r')
+
     # 将包含 .edu 的host 保存到 edu_file
     with open(edu_file, 'w', encoding='utf-8') as edu_f:
         for host in edu_hosts:
@@ -59,10 +66,10 @@ start_time = time.time()
 target_directory = "annotation-urls-target"  # 目标文件夹路径
 edu_file = "edu_urls.txt"  # 保存包含 .edu 的host 的文件
 org_file = "org_urls.txt"  # 保存包含 .org 的host 的文件
-cn_file = "cn_urls.txt"  # 保存包含 .org 的host 的文件
+cn_file = "cn_urls.txt"  # 保存包含 .cn 的host 的文件
 
 # 调用函数
-get_unique_urls_from_hosts(target_directory, edu_file, org_file,cn_file)
+get_unique_urls_from_hosts(target_directory, edu_file, org_file, cn_file)
 
 # 记录结束时间
 end_time = time.time()
