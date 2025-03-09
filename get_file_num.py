@@ -4,7 +4,12 @@ from urllib.parse import urlparse
 import shutil
 import time  # 引入 time 模块
 
-def get_largest_txt_file_with_url(source_directory:str, target_directory:str):
+def get_largest_txt_file_with_url(source_directory: str, target_directory: str):
+    # 如果目标目录不存在，创建它
+    if not os.path.exists(target_directory):
+        os.makedirs(target_directory)
+        print(f"目标目录 {target_directory} 已创建.")
+    
     # 获取文件夹中所有的文件和文件夹
     files = os.listdir(source_directory)
     
@@ -46,6 +51,12 @@ def get_largest_txt_file_with_url(source_directory:str, target_directory:str):
                 for url in urls:
                     url_count += 1
                     parsed_url = urlparse(url)
+                    
+                    # 如果 netloc 包含 '{'，则跳过这个 URL
+                    if '{' in parsed_url.netloc:
+                        print(f"跳过无效 URL (包含 '{{') in file: {file_path}, URL: {url}")
+                        continue
+                    
                     unique_hosts.add(parsed_url.netloc)  # 获取域名并添加到集合中
         
         # 如果包含 URL，则将不重复的域名写入新的文件
