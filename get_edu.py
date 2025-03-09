@@ -2,7 +2,7 @@ import os
 import re
 import time  # 引入 time 模块
 
-def get_unique_urls_from_hosts(target_directory: str, edu_file: str, org_file: str, cn_file: str):
+def get_unique_urls_from_hosts(target_directory: str, edu_file: str, org_file: str, cn_file: str,edu_or_org_file:str):
     # 获取文件夹中所有的文件和文件夹
     files = os.listdir(target_directory)
     
@@ -10,7 +10,7 @@ def get_unique_urls_from_hosts(target_directory: str, edu_file: str, org_file: s
     edu_hosts = set()  # 存储包含 .edu 的host
     org_hosts = set()  # 存储包含 .org 的host
     cn_hosts = set()  # 存储包含 .cn 的host
-
+    edu_or_org_hosts = set()
     # 统计找到的txt文件数量
     file_count = 0
     
@@ -36,8 +36,13 @@ def get_unique_urls_from_hosts(target_directory: str, edu_file: str, org_file: s
                         edu_hosts.add(host)
                     elif '.org' in host:
                         org_hosts.add(host)
+                        edu_or_org_hosts.add(host)
+
                     elif '.cn' in host:
-                        cn_hosts.add(host)        
+
+                        cn_hosts.add(host)  
+                        edu_or_org_hosts.add(host)
+      
                 
         # 打印处理进度
         progress = (file_count / len(files)) * 100  # 计算进度百分比
@@ -47,8 +52,9 @@ def get_unique_urls_from_hosts(target_directory: str, edu_file: str, org_file: s
     with open(edu_file, 'w', encoding='utf-8') as edu_f:
         for host in edu_hosts:
             edu_f.write(host + '\n')  # 每个host 写一行
-    
-    # 将包含 .org 的host 保存到 org_file
+    with open(edu_or_org_file, 'w', encoding='utf-8') as edu_or_org_f:
+        for host in edu_hosts:
+            edu_or_org_f.write(host + '\n')  # 每个host 写一行 
     with open(org_file, 'w', encoding='utf-8') as org_f:
         for host in org_hosts:
             org_f.write(host + '\n')  # 每个host 写一行
@@ -67,9 +73,10 @@ target_directory = "annotation-urls-target"  # 目标文件夹路径
 edu_file = "edu_urls.txt"  # 保存包含 .edu 的host 的文件
 org_file = "org_urls.txt"  # 保存包含 .org 的host 的文件
 cn_file = "cn_urls.txt"  # 保存包含 .cn 的host 的文件
+edu_or_org_file =  "org_or_edu_urls.txt"  # 保存包含 .cn 的host 的文件
 
-# 调用函数
-get_unique_urls_from_hosts(target_directory, edu_file, org_file, cn_file)
+
+get_unique_urls_from_hosts(target_directory, edu_file, org_file, cn_file,edu_or_org_file)
 
 # 记录结束时间
 end_time = time.time()
